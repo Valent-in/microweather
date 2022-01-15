@@ -13,14 +13,40 @@ class WeatherProvider {
 			return response.json();
 		}).then((data) => {
 			console.log(data);
-			callback(data);
+			let outArr = [];
+			data.forEach(e => {
+				let o = {};
+				let nameSplit = e.display_name.split(",");
+				o.name = nameSplit[0];
+				o.description = String(nameSplit.slice(1));
+				o.lat = Number(e.lat).toFixed(3);
+				o.lon = Number(e.lon).toFixed(3);
+				o.type = e.type;
+				outArr.push(o);
+			})
+			callback(outArr);
 		}).catch(err => { console.log("Network error!!! " + err) });
 	}
 
-	getForecast(lat, lon, statusCallback, renderCallback) {
-		let address = "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=" + lat + "&lon=" + lon;
-
+	getForecast(statusCallback, renderCallback) {
 		statusCallback("Loading...");
+
+		let lat = 0;
+		let lon = 0;
+
+		// Laoded from local storage
+		if (this.data.location) {
+			lat = this.data.location.lat;
+			lon = this.data.location.lon;
+		}
+
+		// New location
+		if (this.locationTmp) {
+			lat = this.locationTmp.lat;
+			lon = this.locationTmp.lon;
+		}
+
+		let address = "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=" + lat + "&lon=" + lon;
 
 		if (this.timeIsValid() && this.locationIsValid(lat, lon)) {
 			console.log("storage:");
@@ -44,6 +70,7 @@ class WeatherProvider {
 					console.log("Loaded from storage");
 				} else {
 					renderCallback(null);
+					statusCallback("Data loading error");
 					console.log("Network error. Stored data is not valid.");
 				}
 			});
@@ -68,8 +95,8 @@ class WeatherProvider {
 		localStorage.setItem(this._storeName, JSON.stringify(this.data));
 	}
 
-	prepareLocation(name, description, lat, lon) {
-		this.location_tmp = { name, description, lat, lon };
+	setLocation(lat, lon, name, description) {
+		this.locationTmp = { lat, lon, name, description };
 	}
 
 	saveForecast(data) {
@@ -79,8 +106,8 @@ class WeatherProvider {
 		this.data.forecast = data;
 		this.data.timestamp = Date.now();
 
-		if (this.location_tmp)
-			this.data.location = this.location_tmp;
+		if (this.locationTmp)
+			this.data.location = this.locationTmp;
 
 		this.write();
 	}

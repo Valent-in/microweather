@@ -4,7 +4,7 @@ window.onload = () => {
 	console.log(weather.data);
 
 	if (weather.data.location) {
-		weather.getForecast(weather.data.location.lat, weather.data.location.lon, showStatus, renderForecast);
+		weather.getForecast(showStatus, renderForecast);
 		document.getElementById("cityname").value = weather.data.location.name;
 	}
 }
@@ -180,6 +180,9 @@ function renderForecast(out) {
 	const forecastDiv = document.getElementById("forecast");
 	forecastDiv.innerHTML = "";
 
+	if (!out)
+		return;
+
 	const arrows = "↓↙←↖↑↗→↘↓";
 	const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 	const monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
@@ -258,25 +261,16 @@ function searchCity() {
 		holder.innerHTML = "";
 
 		res.forEach(e => {
-			console.log(e.display_name + "  >>  " + e.type);
-
-			let nameSplit = e.display_name.split(",");
-			let name = nameSplit[0];
-			let desc = String(nameSplit.slice(1));
-
 			let n = document.createElement("P");
-			n.appendChild(document.createTextNode(name));
+			n.appendChild(document.createTextNode(e.name));
 
 			let d = document.createElement("P");
-			d.appendChild(document.createTextNode(desc));
+			d.appendChild(document.createTextNode(e.description));
 			d.classList.add("listdescription");
 
 			let t = document.createElement("P");
 
-			let lat = Number(e.lat).toFixed(3);
-			let lon = Number(e.lon).toFixed(3);
-
-			t.appendChild(document.createTextNode(e.type + " - lat:" + lat + " lon:" + lon));
+			t.appendChild(document.createTextNode(e.type + " - lat:" + e.lat + " lon:" + e.lon));
 			t.classList.add("listinfo");
 
 			let block = document.createElement("DIV");
@@ -287,11 +281,11 @@ function searchCity() {
 			holder.appendChild(block);
 
 			block.addEventListener("click", () => {
-				console.log(lat, lon);
+				console.log(e.lat, e.lon);
 				holder.style.display = "none";
-				weather.prepareLocation(name, desc, lat, lon);
-				cityname.value = name;
-				weather.getForecast(lat, lon, showStatus, renderForecast);
+				cityname.value = e.name;
+				weather.setLocation(e.lat, e.lon, e.name, e.description);
+				weather.getForecast(showStatus, renderForecast);
 			})
 		})
 	});
