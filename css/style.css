@@ -1,0 +1,151 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: sans;
+}
+
+body {
+	background-color: #213;
+}
+
+#main {
+	position: relative;
+}
+
+#spacer {
+	height: 1rem;
+	padding: 19px;
+}
+
+.day-block {
+	color: #ddd;
+}
+
+.day-block>p {
+	padding-top: 20px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	font-weight: bold;
+}
+
+.hour-card {
+	display: flex;
+	background-color: #325;
+	margin: 4px;
+	border-radius: 10px;
+}
+
+.hour-card__box {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 3.2em;
+}
+
+.hour-card__box:nth-child(3), .hour-card__box:nth-child(4) {
+	background-color: rgba(255, 255, 255, 0.04);
+}
+
+.temp_cold {
+	color: #aaf;
+	font-weight: bold;
+}
+
+.temp_warm {
+	color: #faa;
+	font-weight: bold;
+}
+
+.imgdiv {
+	position: relative;
+	display: inline-block;
+	width: 48px;
+	height: 48px;
+}
+
+.imgdiv img {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+}
+
+.additional {
+	color: #666;
+	font-size: 0.8em;
+}
+
+.smaller-text {
+	font-size: 0.85em;
+}
+
+.smaller-minutes {
+	font-size: 0.8em;
+	vertical-align: text-top;
+}
+
+#status-view {
+	font-size: 0.85rem;
+	color: #769;
+	padding: 4px 4px 0 4px;
+}
+
+/*search*/
+#search-form {
+	display: flex;
+	position: fixed;
+	top: 0;
+	z-index: 1;
+	width: 100%;
+	background-color: #436;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border-bottom: 4px solid rgba(125, 51, 102, 0.5);
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#search-form input {
+	border: 1px solid #213;
+	background-color: #cbf;
+	padding: 5px;
+	border-radius: 3px;
+	flex-grow: 1;
+	min-width: 50%;
+	margin: 4px;
+	font-weight: bold;
+	color: #305;
+	font-size: 1rem;
+}
+
+#search-form button {
+	margin: 4px 4px 4px 0;
+	border-left: 1px solid #fb7;
+	border-top: 1px solid #fb7;
+	border-right: 1px solid #851;
+	border-bottom: 1px solid #851;
+	border-radius: 3px;
+	background-color: #e95;
+	padding-left: 8px;
+	padding-right: 8px;
+	font-size: 1rem;
+}
+
+.search-block {
+	background-color: #243;
+	margin: 4px;
+	border-radius: 10px;
+	color: #ddd;
+	padding: 10px;
+}
+
+.listinfo {
+	font-size: 0.4em;
+	color: #ea9;
+}
+
+.listdescription {
+	font-size: 0.6em;
+	color: #bbb;
+}
