@@ -4,7 +4,7 @@ window.onload = () => {
 	console.log(weather.data);
 
 	if (weather.data.location) {
-		weather.getForecast(showStatus, renderForecast);
+		weather.getForecast(showStatus, renderForecast, true);
 		document.getElementById("cityname").value = weather.data.location.name;
 	}
 }
@@ -277,10 +277,21 @@ function searchCity() {
 				weather.getForecast(showStatus, renderForecast);
 			})
 		})
-	});
+	}, showStatus);
 }
 
-function showStatus(statusMsg) {
+function showStatus(statusMsg, type) {
 	let statusView = document.getElementById("status-view");
 	statusView.innerHTML = statusMsg;
+
+	statusView.classList.remove("status_normal");
+	statusView.classList.remove("status_warning");
+	statusView.classList.remove("status_error");
+
+	if (type == "warning")
+		statusView.classList.add("status_warning");
+	else if (type == "error")
+		statusView.classList.add("status_error");
+	else
+		statusView.classList.add("status_normal");
 }

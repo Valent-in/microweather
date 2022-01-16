@@ -87,8 +87,22 @@ body {
 
 #status-view {
 	font-size: 0.85rem;
-	color: #769;
 	padding: 4px 4px 0 4px;
+}
+
+.status_normal {
+	color: #769;
+	font-weight: normal;
+}
+
+.status_warning {
+	color: #f89;
+	font-weight: normal;
+}
+
+.status_error {
+	color: #f89;
+	font-weight: bold;
 }
 
 /*search*/

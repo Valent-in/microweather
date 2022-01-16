@@ -5,7 +5,7 @@ class WeatherProvider {
 		this.read();
 	}
 
-	searchLocationByName(name, callback) {
+	searchLocationByName(name, renderCallback, errorCallback) {
 		let address = "https://nominatim.openstreetmap.org/search?city=" + name + "&format=json";
 		console.log(address);
 
@@ -13,6 +13,13 @@ class WeatherProvider {
 			return response.json();
 		}).then((data) => {
 			console.log(data);
+
+			if (!data.length) {
+				errorCallback("No result", "warning");
+				renderCallback([]);
+				return;
+			}
+
 			let outArr = [];
 			data.forEach(e => {
 				let o = {};
@@ -24,35 +31,36 @@ class WeatherProvider {
 				o.type = e.type;
 				outArr.push(o);
 			})
-			callback(outArr);
-		}).catch(err => { console.log("Network error!!! " + err) });
+			renderCallback(outArr);
+		}).catch(err => {
+			console.log("Network error!!! " + err);
+			errorCallback("Data loading error", "error");
+		});
 	}
 
-	getForecast(statusCallback, renderCallback) {
+	getForecast(statusCallback, renderCallback, force) {
 		statusCallback("Loading...");
 
-		let lat = 0;
-		let lon = 0;
+		let lat, lon;
 
-		// Laoded from local storage
-		if (this.data.location) {
-			lat = this.data.location.lat;
-			lon = this.data.location.lon;
-		}
-
-		// New location
 		if (this.locationTmp) {
+			// New location
 			lat = this.locationTmp.lat;
 			lon = this.locationTmp.lon;
+		} else if (this.data.location) {
+			// Laoded from local storage
+			lat = this.data.location.lat;
+			lon = this.data.location.lon;
+		} else {
+			return;
 		}
 
 		let address = "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=" + lat + "&lon=" + lon;
 
-		if (this.timeIsValid() && this.locationIsValid(lat, lon)) {
+		if (this.timeIsValid() && this.locationIsValid(lat, lon) && !force) {
 			console.log("storage:");
-			//console.log(weather.data.forecast);
 			renderCallback(this.data.forecast);
-			statusCallback(this.getUpdTime());
+			statusCallback(this.getUpdTimeString());
 			console.log("from storage")
 		} else {
 			fetch(address).then((response) => {
@@ -61,25 +69,25 @@ class WeatherProvider {
 				let out = this.parseWeather(data);
 				this.saveForecast(out);
 				renderCallback(out);
-				statusCallback(this.getUpdTime());
+				statusCallback(this.getUpdTimeString());
 			}).catch((err) => {
 				console.log("Network error!!!  " + err);
 				if (this.locationIsValid(lat, lon)) {
 					renderCallback(this.data.forecast);
-					statusCallback(this.getUpdTime());
+					statusCallback(this.getUpdTimeString(), "warning");
 					console.log("Loaded from storage");
 				} else {
 					renderCallback(null);
-					statusCallback("Data loading error");
+					statusCallback("Data loading error", "error");
 					console.log("Network error. Stored data is not valid.");
 				}
 			});
 		}
 	}
 
-	getUpdTime() {
+	getUpdTimeString() {
 		let updTime = new Date(this.data.timestamp);
-		return updTime.toLocaleString("uk-UA");
+		return "Last update: " + updTime.toLocaleString("uk-UA");
 	}
 
 	read() {
@@ -124,7 +132,7 @@ class WeatherProvider {
 	}
 
 	timeIsValid() {
-		if (this.data.timestamp < Date.now() - 1000 * 60 * 1)
+		if (this.data.timestamp < Date.now() - 1000 * 60 * 15)
 			return false;
 
 		console.log("Stored data is actual");
