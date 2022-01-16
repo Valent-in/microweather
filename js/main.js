@@ -43,7 +43,7 @@ function createCard(time, temp, symbol, rain, wind, avgTemp) {
 	tempd.classList.add("hour-card__box");
 
 	let imaged = document.createElement("DIV");
-	let imagei = buildIcon(symbol, "bg_day.svg");
+	let imagei = buildIcon(symbol);
 	imaged.appendChild(imagei);
 	imaged.classList.add("hour-card__box");
 
@@ -96,67 +96,56 @@ function truncateToOne(num) {
 }
 
 
-function buildIcon(filename, bg) {
+function buildIcon(symbol) {
 	let imgDiv = document.createElement("DIV");
 	imgDiv.classList.add("imgdiv");
 
-	_addImg(bg);
+	_addImg("bg.svg");
 
-	if (filename.includes("night"))
+	if (symbol.includes("night"))
 		_addImg("moon.svg");
 
-	if (filename.includes("day"))
+	if (symbol.includes("day"))
 		_addImg("sun.svg");
 
-	if (filename.includes("polartwilight"))
+	if (symbol.includes("polartwilight"))
 		_addImg("twilight.svg");
 
 
-	if (filename.includes("clearsky"))
+	if (symbol.includes("clearsky"))
 		console.log("clearsky"); // do nothing
-	else if (filename.includes("fair"))
-		_addImg("cloud_fair.svg");
-	else if (filename.includes("cloudy") || filename.indexOf("light") == 0)
+	else if (symbol.includes("fair"))
+		_addImg("cloud_small.svg");
+	else if (symbol.includes("cloudy") || symbol.indexOf("light") == 0)
 		_addImg("cloud.svg");
 	else
 		_addImg("cloud_heavy.svg");
 
+	if (symbol.includes("rain"))
+		_precipitations("rain");
 
-	if (filename.includes("rain")) {
-		if (filename.includes("heavy"))
-			_addImg("rain3.svg")
-		else if (filename.indexOf("light") == 0)
-			_addImg("rain1.svg")
-		else
-			_addImg("rain2.svg")
-	}
+	if (symbol.includes("snow"))
+		_precipitations("snow");
 
-	if (filename.includes("snow")) {
-		if (filename.includes("heavy"))
-			_addImg("snow3.svg")
-		else if (filename.indexOf("light") == 0)
-			_addImg("snow1.svg")
-		else
-			_addImg("snow2.svg")
-	}
+	if (symbol.includes("sleet"))
+		_precipitations("sleet");
 
-	if (filename.includes("sleet")) {
-		if (filename.includes("heavy"))
-			_addImg("sleet3.svg")
-		else if (filename.indexOf("light") == 0)
-			_addImg("sleet1.svg")
-		else
-			_addImg("sleet2.svg")
-	}
-
-
-	if (filename.includes("fog"))
+	if (symbol.includes("fog"))
 		_addImg("fog.svg");
 
-	if (filename.includes("thunder"))
+	if (symbol.includes("thunder"))
 		_addImg("lightning.svg");
 
 	return imgDiv;
+
+	function _precipitations(type) {
+		if (symbol.includes("heavy"))
+			_addImg(type + "3.svg")
+		else if (symbol.indexOf("light") == 0)
+			_addImg(type + "1.svg")
+		else
+			_addImg(type + "2.svg")
+	}
 
 	function _addImg(file) {
 		let img = document.createElement("IMG");
