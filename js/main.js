@@ -1,10 +1,23 @@
 let weather = new WeatherProvider();
+let interval;
 
 window.onload = () => {
 	console.log(weather.data);
+	refreshForecast(true)
+}
 
+window.onfocus = () => {
+	refreshForecast(false);
+	interval = setInterval(() => { refreshForecast(false) }, 1000 * 60 * 33);
+}
+
+window.onblur = () => {
+	clearInterval(interval);
+}
+
+function refreshForecast(force) {
 	if (weather.data.location) {
-		weather.getForecast(showStatus, renderForecast, true);
+		weather.getForecast(showStatus, renderForecast, force);
 		document.getElementById("cityname").value = weather.data.location.name;
 	}
 }
