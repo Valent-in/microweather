@@ -132,7 +132,7 @@ class WeatherProvider {
 	}
 
 	timeIsValid() {
-		if (this.data.timestamp < Date.now() - 1000 * 60 * 15)
+		if (this.data.timestamp < Date.now() - 1000 * 60 * 25)
 			return false;
 
 		console.log("Stored data is actual");

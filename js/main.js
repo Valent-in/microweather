@@ -1,18 +1,23 @@
 let weather = new WeatherProvider();
 let interval;
+let updInterval = 1000 * 60 * 33;
 
 window.onload = () => {
 	console.log(weather.data);
 	refreshForecast(true)
+	if (!interval)
+		interval = setInterval(() => { refreshForecast(false) }, updInterval);
 }
 
 window.onfocus = () => {
 	refreshForecast(false);
-	interval = setInterval(() => { refreshForecast(false) }, 1000 * 60 * 33);
+	if (!interval)
+		interval = setInterval(() => { refreshForecast(false) }, updInterval);
 }
 
 window.onblur = () => {
 	clearInterval(interval);
+	interval = null;
 }
 
 function refreshForecast(force) {
