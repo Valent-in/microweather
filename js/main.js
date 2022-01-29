@@ -203,7 +203,7 @@ function renderForecast(out) {
 		let lastCard;
 
 		let currentDate = new Date(Date.now());
-		if (compareDateDays(date, currentDate) > 0)
+		if (compareDateDays(date, currentDate) < 0)
 			block.style.opacity = "0.2";
 
 		for (let s of e.segments) {
@@ -234,23 +234,26 @@ function renderForecast(out) {
 	}
 }
 
-// TODO FIX!
 function compareDateDays(smaller, bigger) {
 	if (smaller.getFullYear() < bigger.getFullYear())
+		return -1;
+
+	if (smaller.getFullYear() > bigger.getFullYear())
 		return 1;
 
 	if (smaller.getMonth() < bigger.getMonth())
+		return -1;
+
+	if (smaller.getMonth() > bigger.getMonth())
 		return 1;
 
 	if (smaller.getDate() < bigger.getDate())
+		return -1;
+
+	if (smaller.getDate() > bigger.getDate())
 		return 1;
 
-	if (smaller.getFullYear() == bigger.getFullYear() &&
-		smaller.getMonth() == bigger.getMonth() &&
-		smaller.getDate() == bigger.getDate())
-		return 0;
-
-	return -1;
+	return 0;
 }
 
 function searchCity() {
