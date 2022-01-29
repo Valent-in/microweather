@@ -20,6 +20,11 @@ window.onblur = () => {
 	interval = null;
 }
 
+const div = () => document.createElement("DIV");
+const par = () => document.createElement("P");
+const span = () => document.createElement("SPAN");
+const textNode = (text) => document.createTextNode(text);
+
 function refreshForecast(force) {
 	if (weather.data.location) {
 		weather.getForecast(showStatus, renderForecast, force);
@@ -28,76 +33,75 @@ function refreshForecast(force) {
 }
 
 function createCard(time, temp, symbol, rain, wind, avgTemp) {
-	let cont = document.createElement("DIV");
+	let card = div();
+	card.classList.add("hour-card");
 
-	let timed = document.createElement("DIV");
-	let times = document.createElement("SPAN");
-	times.appendChild(document.createTextNode(time));
-	timed.appendChild(times);
+	let hours = span();
+	hours.appendChild(textNode(time));
 
-	let timesm = document.createElement("SPAN");
-	timesm.appendChild(document.createTextNode(":00"));
-	timesm.classList.add("smaller-minutes");
-	timed.appendChild(timesm);
+	let minutes = span();
+	minutes.appendChild(textNode(":00"));
+	minutes.classList.add("smaller-minutes");
 
-	let timedb = document.createElement("DIV");
-	timedb.appendChild(timed);
-	timedb.classList.add("hour-card__box");
+	let timeDiv = div();
+	timeDiv.appendChild(hours);
+	timeDiv.appendChild(minutes);
 
-	let tempd = document.createElement("DIV");
-	let temps = document.createElement("SPAN");
-	temps.appendChild(document.createTextNode(temp + "°"));
-	tempd.appendChild(temps);
+	let timeBox = div();
+	timeBox.classList.add("hour-card__box");
+	timeBox.appendChild(timeDiv);
+
+	let tempBox = div();
+	tempBox.classList.add("hour-card__box");
+	let tempSapan = span();
+	tempSapan.appendChild(textNode(temp + "°"));
+	tempBox.appendChild(tempSapan);
 
 	if (temp > 0)
-		temps.classList.add("temp_warm");
+		tempSapan.classList.add("temp_warm");
 	else
-		temps.classList.add("temp_cold");
+		tempSapan.classList.add("temp_cold");
 
-	let tempas = document.createElement("SPAN");
-	tempas.appendChild(document.createTextNode(avgTemp));
-	tempas.classList.add("additional");
-	tempd.appendChild(tempas);
-	tempd.classList.add("hour-card__box");
+	let avgTempSpan = span();
+	avgTempSpan.appendChild(textNode(avgTemp));
+	avgTempSpan.classList.add("additional");
+	tempBox.appendChild(avgTempSpan);
 
-	let imaged = document.createElement("DIV");
-	let imagei = buildIcon(symbol);
-	imaged.appendChild(imagei);
-	imaged.classList.add("hour-card__box");
+	let iconBox = div();
+	iconBox.classList.add("hour-card__box");
+	let icon = buildIcon(symbol);
+	iconBox.appendChild(icon);
 
-	let raind = createTextBox(rain);
-	raind.classList.add("smaller-text");
+	let rainBox = createTextBox(rain);
+	rainBox.classList.add("smaller-text");
 
-	let windd = createTextBox(wind);
-	windd.classList.add("smaller-text");
+	let windBox = createTextBox(wind);
+	windBox.classList.add("smaller-text");
 
-	cont.appendChild(timedb);
-	cont.appendChild(tempd);
-	cont.appendChild(imaged);
-	cont.appendChild(raind);
-	cont.appendChild(windd);
+	card.appendChild(timeBox);
+	card.appendChild(tempBox);
+	card.appendChild(iconBox);
+	card.appendChild(rainBox);
+	card.appendChild(windBox);
 
-	cont.classList.add("hour-card");
-
-	return cont;
+	return card;
 }
 
 function createTextBox(text) {
-	let textd = document.createElement("DIV");
-	let textp = document.createElement("P");
-	textp.appendChild(document.createTextNode(text));
-	textd.appendChild(textp);
-	textd.classList.add("hour-card__box");
+	let d = div();
+	let p = par();
+	p.appendChild(textNode(text));
+	d.appendChild(p);
+	d.classList.add("hour-card__box");
 
-	return textd;
+	return d;
 }
 
 function createBlock(title) {
-	let d = document.createElement("DIV");
-	let p = document.createElement("P");
-	p.appendChild(document.createTextNode(title));
+	let d = div();
+	let p = par();
+	p.appendChild(textNode(title));
 	d.appendChild(p);
-
 	d.classList.add("day-block");
 
 	return d;
@@ -115,7 +119,7 @@ function truncateToOne(num) {
 
 
 function buildIcon(symbol) {
-	let imgDiv = document.createElement("DIV");
+	let imgDiv = div();
 	imgDiv.classList.add("imgdiv");
 
 	_addImg("bg.svg");
@@ -178,16 +182,12 @@ function clearForecastView() {
 	console.log("clear view");
 }
 
-function renderForecast(out) {
-	//console.log(data);
-	//let out = parseWeather(data);
-
-	console.log(out);
-
+function renderForecast(data) {
 	const forecastDiv = document.getElementById("forecast");
 	forecastDiv.innerHTML = "";
 
-	if (!out)
+	console.log(data);
+	if (!data)
 		return;
 
 	const arrows = "↓↙←↖↑↗→↘↓";
@@ -195,11 +195,11 @@ function renderForecast(out) {
 	const monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
 
 
-	for (let e of out) {
+	for (let e of data) {
 		let date = new Date(e.utime);
 		let dateString = monthNames[date.getMonth()] + " " + date.getDate() + ", " + dayNames[date.getDay()]
 		let blockDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-		block = createBlock(dateString);
+		let block = createBlock(dateString);
 		let lastCard;
 
 		let currentDate = new Date(Date.now());
@@ -265,29 +265,30 @@ function searchCity() {
 
 	showStatus("Location select");
 
-	weather.searchLocationByName(name, (res) => {
+	weather.searchLocationByName(name, (result) => {
 		let holder = document.getElementById("searchresult");
 		holder.style.display = "block";
 		holder.innerHTML = "";
 
-		res.forEach(e => {
-			let n = document.createElement("P");
-			n.appendChild(document.createTextNode(e.name));
+		result.forEach(e => {
+			let nameP = par();
+			nameP.appendChild(textNode(e.name));
 
-			let d = document.createElement("P");
-			d.appendChild(document.createTextNode(e.description));
-			d.classList.add("listdescription");
+			let descP = par();
+			descP.appendChild(textNode(e.description));
+			descP.classList.add("listdescription");
 
-			let t = document.createElement("P");
+			let typeP = par();
 
-			t.appendChild(document.createTextNode(e.type + " - lat:" + e.lat + " lon:" + e.lon));
-			t.classList.add("listinfo");
+			typeP.appendChild(textNode(e.type + " - lat:" + e.lat + " lon:" + e.lon));
+			typeP.classList.add("listinfo");
 
-			let block = document.createElement("DIV");
+			let block = div();
 			block.classList.add("search-block");
-			block.appendChild(n);
-			block.appendChild(t);
-			block.appendChild(d);
+			block.appendChild(nameP);
+			block.appendChild(typeP);
+			block.appendChild(descP);
+
 			holder.appendChild(block);
 
 			block.addEventListener("click", () => {
