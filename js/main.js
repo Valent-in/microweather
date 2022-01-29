@@ -266,8 +266,8 @@ function searchCity() {
 	showStatus("Location select");
 
 	weather.searchLocationByName(name, (result) => {
-		let holder = document.getElementById("searchresult");
-		holder.style.display = "block";
+		let holder = document.getElementById("search-result");
+		holder.style.display = "flex";
 		holder.innerHTML = "";
 
 		result.forEach(e => {
