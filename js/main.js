@@ -3,6 +3,12 @@ let interval;
 let updInterval = 1000 * 60 * 33;
 
 window.onload = () => {
+	let cityNameInput = document.getElementById("cityname");
+	cityNameInput.addEventListener("keydown", (e)=>{
+		if (e.key == "Enter")
+			searchCity()
+	});
+
 	console.log(weather.data);
 	refreshForecast(true)
 	if (!interval)
