@@ -24,6 +24,28 @@ body {
 	flex-wrap: wrap;
 }
 
+.location-hint {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #325;
+	color: #ddd;
+	border-radius: 10px;
+	margin-top: 10px;
+	padding: 10px 20px;
+}
+
+.location-hint:before {
+	content: "";
+	position: absolute;
+	top: -12px;
+	left: calc(50% -12px);
+	border-bottom: 12px solid #325;
+	border-left: 12px solid transparent;
+	border-right: 12px solid transparent;
+}
+
 .day-block {
 	color: #ddd;
 	max-width: 75vh;
