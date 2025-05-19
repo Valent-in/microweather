@@ -35,6 +35,10 @@ function refreshForecast(force) {
 	if (weather.data.location) {
 		weather.getForecast(showStatus, renderForecast, force);
 		document.getElementById("cityname").value = weather.data.location.name;
+	} else {
+		let hint = document.getElementById("location-hint");
+		if (hint)
+			hint.style.opacity = 1;
 	}
 }
 
